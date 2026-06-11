@@ -17,10 +17,13 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.util.ARGB;
+import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.phys.Vec3;
 
 public class NamedWaypoint extends Waypoint {
@@ -166,7 +169,10 @@ public class NamedWaypoint extends Waypoint {
 		super.extractRendering(collector);
 		if (shouldRenderName()) {
 			float scale = Math.max((float) RenderHelper.getCamera().position().distanceTo(centerPos) / 10, 1);
-			collector.submitText(name, centerPos.add(0, 1, 0), scale, true);
+			if (getRenderType() == Type.SHULKERED &&
+					Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesOfClass(Shulker.class, this.getRenderBox()).isEmpty()) {
+				collector.submitText(name, centerPos.add(0, 1, 0), scale, true);
+			}
 		}
 	}
 

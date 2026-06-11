@@ -7,9 +7,12 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Supplier;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.phys.AABB;
 
 /**
@@ -230,6 +233,11 @@ public class Waypoint implements Renderable {
 				collector.submitOutlinedBox(box, colorComponents, lineWidth, throughWalls);
 			}
 			case OUTLINE -> collector.submitOutlinedBox(box, colorComponents, lineWidth, throughWalls);
+			case SHULKERED -> {
+				if (Minecraft.getInstance().level != null && !Minecraft.getInstance().level.getEntitiesOfClass(Shulker.class, this.box).isEmpty()) {
+					collector.submitFilledBox(box, colorComponents, alpha, throughWalls);
+				}
+			}
 		}
 	}
 	// endregion
@@ -249,6 +257,7 @@ public class Waypoint implements Renderable {
 		OUTLINED_WAYPOINT,
 		HIGHLIGHT,
 		OUTLINED_HIGHLIGHT,
+		SHULKERED,
 		OUTLINE;
 
 		public static final Codec<Type> CODEC = StringRepresentable.fromEnum(Type::values);
