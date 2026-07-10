@@ -21,7 +21,6 @@ import de.hysky.skyblocker.skyblock.item.tooltip.BackpackPreview;
 import de.hysky.skyblocker.skyblock.item.tooltip.CompactorDeletorPreview;
 import de.hysky.skyblocker.skyblock.item.wikilookup.WikiLookupManager;
 import de.hysky.skyblocker.skyblock.museum.MuseumItemCache;
-import de.hysky.skyblocker.utils.ItemUtils;
 import de.hysky.skyblocker.utils.Utils;
 import de.hysky.skyblocker.utils.container.ContainerSolver;
 import de.hysky.skyblocker.utils.container.ContainerSolverManager;
@@ -130,7 +129,12 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 
 			//item protection
 			if (ItemProtection.itemProtection.matches(input)) {
-				ItemProtection.handleKeyPressed(this.hoveredSlot.getItem());
+				ItemProtection.itemProtection.consumeClick();
+				boolean ownItem = this.hoveredSlot.container == this.minecraft.player.getInventory()
+						|| ItemProtection.isPersonalStorage(this.getTitle().getString());
+				if (ownItem) {
+					ItemProtection.handleKeyPressed(this.hoveredSlot.getItem());
+				}
 			}
 			//Item Price Lookup
 			if (config.helpers.itemPrice.enableItemPriceLookup && ItemPrice.ITEM_PRICE_LOOKUP.matches(input)) {
@@ -295,17 +299,16 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
 			return;
 		}
 
+		// Prevent selling protected items to NPC shops
+		if (this.menu instanceof ChestMenu && ItemProtection.isItemProtected(stack)
+				&& !ItemProtection.isNpcSellButton(slot) && ItemProtection.isNpcSellMenu(this.menu)) {
+			ci.cancel();
+			return;
+		}
+
 		switch (this.menu) {
 			case ChestMenu genericContainerScreenHandler when genericContainerScreenHandler.getRowCount() == 6 -> {
 				VisitorHelper.onSlotClick(slot, slotId, title, genericContainerScreenHandler.getSlot(13));
-				// Prevent selling to NPC shops
-				ItemStack sellStack = this.menu.slots.get(49).getItem();
-				if (sellStack.getHoverName().getString().equals("Sell Item") || ItemUtils.getLoreLineIf(sellStack, text -> text.contains("buyback")) != null) {
-					if (slotId != 49 && ItemProtection.isItemProtected(stack)) {
-						ci.cancel();
-						return;
-					}
-				}
 			}
 
 			case ChestMenu genericContainerScreenHandler when title.equals(MuseumItemCache.DONATION_CONFIRMATION_SCREEN_TITLE) -> //Museum Item Cache donation tracking

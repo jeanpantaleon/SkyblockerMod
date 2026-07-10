@@ -25,9 +25,21 @@
     "modmenu": [
       "de.hysky.skyblocker.compatibility.modmenu.ModMenuEntry"
     ],
+	"rei_client": [
+	  "de.hysky.skyblocker.compatibility.rei.SkyblockerREIClientPlugin"
+	],
+	"rei_common": [
+	   "de.hysky.skyblocker.compatibility.rei.SkyblockerREICommonPlugin"
+	],
     "jei_mod_plugin": [
       "de.hysky.skyblocker.compatibility.jei.SkyblockerJEIPlugin"
-    ]
+    ],
+		"skyblock-item-list": [
+			"de.hysky.skyblocker.compatibility.ItemListCompatibility"
+		],
+		"catharsis:imc/hidden_mod_elements": [
+			"de.hysky.skyblocker.compatibility.CatharsisCompatibility::hiddenGuiElements"
+		]
   },
   "mixins": [
     "skyblocker.mixins.json"
@@ -36,7 +48,7 @@
   "depends": {
     "fabricloader": ">=0.19.1",
     "fabric-api": ">=0.145.3+26.1.1",
-	"dandelion": ">=1.0.0-alpha.18+26.1",
+	"dandelion": ">=1.0.0-alpha.21+26.1",
     "yet_another_config_lib_v3": ">=3.9.2+26.1",
 	"fabric-language-kotlin": "*",
     "hm-api": ">=1.0.3+26.1",
