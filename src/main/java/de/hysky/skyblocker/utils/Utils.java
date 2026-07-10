@@ -308,8 +308,10 @@ public class Utils {
 	public static String getIslandArea() {
 		try {
 			for (String sidebarLine : STRING_SCOREBOARD) {
-				if (sidebarLine.contains("⏣") || sidebarLine.contains("ф") /* Rift */) {
-					return sidebarLine.strip();
+				if (sidebarLine.contains(SkyBlockIcons.AREA) || sidebarLine.contains(SkyBlockIcons.RIFT_AREA) /* Rift */) {
+					// FIXME this replace logic should be "fixed" properly, this is just to quickly make it like the old pre-sb-rp format
+					// so that other features still function the way they did before without extra changes
+					return sidebarLine.strip().replace(SkyBlockIcons.AREA, "⏣").replace(SkyBlockIcons.RIFT_AREA, "ф");
 				}
 			}
 		} catch (IndexOutOfBoundsException e) {
@@ -391,7 +393,7 @@ public class Utils {
 	}
 
 	private static void updateArea() {
-		String areaName = getIslandArea().replaceAll("[⏣ф]", "").strip();
+		String areaName = getIslandArea().replaceAll(String.format("[%s%s]", SkyBlockIcons.AREA, SkyBlockIcons.RIFT_AREA), "").strip();
 		Area oldArea = area;
 		area = Area.from(areaName);
 
@@ -590,8 +592,8 @@ public class Utils {
 	public static void sendMessageToBypassEvents(Component message) {
 		Minecraft client = Minecraft.getInstance();
 
-		client.gui.getChat().addClientSystemMessage(message);
-		((ChatListenerAccessor) client.getChatListener()).invokeLogSystemMessage(message, Instant.now());
+		client.gui.hud.getChat().addClientSystemMessage(message);
+		((ChatListenerAccessor) client.gui.chatListener()).invokeLogSystemMessage(message, Instant.now());
 		client.getNarrator().saySystemQueued(message);
 	}
 

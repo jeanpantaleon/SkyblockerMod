@@ -6,6 +6,7 @@ import de.hysky.skyblocker.SkyblockerMod;
 import de.hysky.skyblocker.annotations.Init;
 import de.hysky.skyblocker.config.SkyblockerConfigManager;
 import de.hysky.skyblocker.utils.Constants;
+import de.hysky.skyblocker.utils.ItemUtils;
 import de.hysky.skyblocker.utils.Location;
 import de.hysky.skyblocker.utils.Utils;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -26,6 +27,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
@@ -128,6 +131,45 @@ public class ItemProtection {
 			ItemStack heldItem = player.getMainHandItem();
 			handleKeyPressed(heldItem);
 		}
+	}
+
+	public static boolean isPersonalStorage(String screenTitle) {
+		return screenTitle.equals("Storage") || screenTitle.startsWith("Storage (")
+				|| screenTitle.equals("Rift Storage") || screenTitle.startsWith("Rift Storage (")
+				|| screenTitle.startsWith("Ender Chest")
+				|| screenTitle.startsWith("Chest")
+				|| screenTitle.startsWith("Trapped Chest")
+				|| (screenTitle.contains("Backpack") && screenTitle.contains("(Slot #"))
+				// Furniture storage
+				|| screenTitle.startsWith("Chest Storage")
+				|| screenTitle.startsWith("Medium Shelves")
+				|| screenTitle.startsWith("Wood Chest")
+				|| screenTitle.startsWith("Diamond Chest")
+				|| screenTitle.startsWith("Emerald Chest")
+				|| screenTitle.startsWith("Iron Chest")
+				|| screenTitle.startsWith("Gold Chest")
+				|| screenTitle.startsWith("Lapis Chest")
+				|| screenTitle.startsWith("Redstone Chest")
+				|| screenTitle.startsWith("Endstone Chest")
+				|| screenTitle.startsWith("Skull Chest")
+				|| screenTitle.startsWith("Weapon Rack")
+				|| screenTitle.startsWith("Armor Stand");
+	}
+
+	public static boolean isNpcSellMenu(AbstractContainerMenu menu) {
+		for (Slot slot : menu.slots) {
+			ItemStack stack = slot.getItem();
+			if (stack.isEmpty()) continue;
+			String name = stack.getHoverName().getString();
+			if (name.equals("Sell Item") || name.equals("Sell Inventory")) return true;
+			if (ItemUtils.getLoreLineIf(stack, text -> text.contains("buyback")) != null) return true;
+		}
+		return false;
+	}
+
+	public static boolean isNpcSellButton(Slot slot) {
+		String name = slot.getItem().getHoverName().getString();
+		return name.equals("Sell Item") || name.equals("Sell Inventory") || ItemUtils.getLoreLineIf(slot.getItem(), text -> text.contains("buyback")) != null;
 	}
 
 	private static InteractionResult onEntityInteract(Player playerEntity, Level world, InteractionHand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {

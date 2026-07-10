@@ -37,10 +37,12 @@ public class Ico {
 	public static final FlexibleItemStack GOD_POTION = ItemUtils.createSkull(HeadTextures.GOD_POTION);
 	public static final FlexibleItemStack S_POTION = new FlexibleItemStack(Items.SPLASH_POTION);
 	public static final FlexibleItemStack BARRIER = new FlexibleItemStack(Items.BARRIER);
-	public static final FlexibleItemStack RED_CONCRETE = new FlexibleItemStack(Items.RED_CONCRETE);
+	public static final FlexibleItemStack RED_CONCRETE = new FlexibleItemStack(Items.CONCRETE.red());
 	public static final FlexibleItemStack POISONOUS_POTATO = new FlexibleItemStack(Items.POISONOUS_POTATO);
 	public static final FlexibleItemStack PLAYER = new FlexibleItemStack(Items.PLAYER_HEAD);
 	public static final FlexibleItemStack FAIRY_SOUL = ItemUtils.createSkull(HeadTextures.FAIRY_SOUL);
+	public static final FlexibleItemStack JUMBO_BACKPACK = ItemUtils.createSkull(HeadTextures.JUMBO_BACKPACK);
+	public static final FlexibleItemStack ACCESSORY_BAG = ItemUtils.createSkull(HeadTextures.ACCESSORY_BAG);
 	public static final FlexibleItemStack WATER = new FlexibleItemStack(Items.WATER_BUCKET);
 	public static final FlexibleItemStack LEATHER = new FlexibleItemStack(Items.LEATHER);
 	public static final FlexibleItemStack MITHRIL = new FlexibleItemStack(Items.PRISMARINE_CRYSTALS);
@@ -60,6 +62,7 @@ public class Ico {
 	public static final FlexibleItemStack FURNACE = new FlexibleItemStack(Items.FURNACE);
 	public static final FlexibleItemStack CHESTPLATE = new FlexibleItemStack(Items.IRON_CHESTPLATE);
 	public static final FlexibleItemStack L_CHESTPLATE = new FlexibleItemStack(Items.LEATHER_CHESTPLATE);
+	public static final FlexibleItemStack BROWN_HARNESS = new FlexibleItemStack(Items.HARNESS.brown());
 	public static final FlexibleItemStack B_ROD = new FlexibleItemStack(Items.BLAZE_ROD);
 	public static final FlexibleItemStack B_POWDER = new FlexibleItemStack(Items.BLAZE_POWDER);
 	public static final FlexibleItemStack BOW = new FlexibleItemStack(Items.BOW);
@@ -74,9 +77,9 @@ public class Ico {
 	public static final FlexibleItemStack NETHER_STAR = new FlexibleItemStack(Items.NETHER_STAR);
 	public static final FlexibleItemStack HEART_OF_THE_SEA = new FlexibleItemStack(Items.HEART_OF_THE_SEA);
 	public static final FlexibleItemStack EXPERIENCE_BOTTLE = new FlexibleItemStack(Items.EXPERIENCE_BOTTLE);
-	public static final FlexibleItemStack PINK_DYE = new FlexibleItemStack(Items.PINK_DYE);
-	public static final FlexibleItemStack LIME_DYE = new FlexibleItemStack(Items.LIME_DYE);
-	public static final FlexibleItemStack GRAY_DYE = new FlexibleItemStack(Items.GRAY_DYE);
+	public static final FlexibleItemStack PINK_DYE = new FlexibleItemStack(Items.DYE.pink());
+	public static final FlexibleItemStack LIME_DYE = new FlexibleItemStack(Items.DYE.lime());
+	public static final FlexibleItemStack GRAY_DYE = new FlexibleItemStack(Items.DYE.gray());
 	public static final FlexibleItemStack ENCHANTED_BOOK = new FlexibleItemStack(Items.ENCHANTED_BOOK);
 	public static final FlexibleItemStack SPIDER_EYE = new FlexibleItemStack(Items.SPIDER_EYE);
 	public static final FlexibleItemStack PACKED_ICE = new FlexibleItemStack(Items.PACKED_ICE);

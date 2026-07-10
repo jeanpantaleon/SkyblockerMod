@@ -14,6 +14,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import de.hysky.skyblocker.SkyblockerMod;
 import de.hysky.skyblocker.annotations.Init;
+import de.hysky.skyblocker.compatibility.CatharsisCompatibility;
 import de.hysky.skyblocker.config.SkyblockerConfigManager;
 import de.hysky.skyblocker.skyblock.itemlist.ItemRepository;
 import de.hysky.skyblocker.utils.Area;
@@ -115,7 +116,7 @@ public class VisitorHelper extends AbstractWidget {
 	public static boolean shouldRender() {
 		boolean isHelperEnabled = SkyblockerConfigManager.get().farming.visitorHelper.enabled;
 		boolean isGardenMode = SkyblockerConfigManager.get().farming.visitorHelper.showInGardenOnly;
-		return isHelperEnabled && (!isGardenMode || Utils.isInGarden() || Utils.getArea() == Area.Hub.BAZAAR);
+		return isHelperEnabled && (!isGardenMode || Utils.isInGarden() || Utils.getArea() == Area.Hub.BAZAAR) && !CatharsisCompatibility.isGuiElementHidden("skyblocker:visitorHelper");
 	}
 
 	public static List<ScreenRectangle> getExclusionZones() {
@@ -154,6 +155,7 @@ public class VisitorHelper extends AbstractWidget {
 
 		acceptButton.skyblocker$getLoreStrings().stream()
 				.map(String::trim)
+				.map(ChatFormatting::stripFormatting)
 				.dropWhile(lore -> !lore.contains("Items Required")) // All lines before Items Required (shouldn't be any, but you never know)
 				.skip(1) // skip the Items Required line
 				.takeWhile(lore -> !lore.isEmpty()) // All lines until the blank line before Rewards

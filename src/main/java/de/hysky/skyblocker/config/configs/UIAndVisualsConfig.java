@@ -44,6 +44,8 @@ public class UIAndVisualsConfig {
 
 	public boolean trueQuiverCount = true;
 
+	public SkyBlockInventoryScreen skyblockInventoryScreen = new SkyBlockInventoryScreen();
+
 	public ChestValue chestValue = new ChestValue();
 
 	public ItemCooldown itemCooldown = new ItemCooldown();
@@ -85,6 +87,12 @@ public class UIAndVisualsConfig {
 	public GyrokineticWandOverlay gyroOverlay = new GyrokineticWandOverlay();
 
 	public ItemPickup itemPickup = new ItemPickup();
+
+	public static class SkyBlockInventoryScreen {
+		// TODO: Move showEquipmentInInventory to here.
+
+		public boolean openEquipmentToStatsPage = false;
+	}
 
 	public static class ChestValue {
 		public boolean enableChestValue = true;
@@ -274,6 +282,10 @@ public class UIAndVisualsConfig {
 
 		public boolean enableVanillaStyleManaBar = false;
 
+		public boolean enableVanillaStyleManaBarBlinking = true;
+
+		public boolean useHungerBarSprites = false;
+
 		public IntelligenceDisplay intelligenceDisplay = IntelligenceDisplay.ORIGINAL;
 
 		// Kept in for backwards compatibility, remove if needed
@@ -357,6 +369,8 @@ public class UIAndVisualsConfig {
 
 	public static class SmoothAOTE {
 		public boolean predictive = false;
+
+		public boolean thirdPerson = true;
 
 		public boolean enableWeirdTransmission = false;
 
