@@ -3,25 +3,27 @@ package de.hysky.skyblocker.skyblock.item;
 import java.util.Arrays;
 import java.util.Optional;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.StringRepresentable;
 import com.google.common.collect.Streams;
 import com.mojang.serialization.Codec;
 import de.hysky.skyblocker.utils.EnumUtils;
+import de.hysky.skyblocker.utils.SkyBlockColors;
 import io.github.moulberry.repo.data.Rarity;
 
 public enum SkyblockItemRarity implements StringRepresentable {
 	COMMON(ChatFormatting.WHITE),
 	UNCOMMON(ChatFormatting.GREEN),
-	RARE(ChatFormatting.BLUE),
-	EPIC(ChatFormatting.DARK_PURPLE),
-	LEGENDARY(ChatFormatting.GOLD),
+	RARE(ChatFormatting.BLUE, SkyBlockColors.BLUE),
+	EPIC(ChatFormatting.DARK_PURPLE, SkyBlockColors.DARK_PURPLE),
+	LEGENDARY(ChatFormatting.GOLD, SkyBlockColors.GOLD),
 	MYTHIC(ChatFormatting.LIGHT_PURPLE),
 	DIVINE(ChatFormatting.AQUA),
 	SPECIAL(ChatFormatting.RED),
 	VERY_SPECIAL(ChatFormatting.RED),
-	ULTIMATE(ChatFormatting.DARK_RED),
-	ADMIN(ChatFormatting.DARK_RED),
+	ULTIMATE(ChatFormatting.DARK_RED, SkyBlockColors.DARK_RED),
+	ADMIN(ChatFormatting.DARK_RED, SkyBlockColors.DARK_RED),
 	UNKNOWN(ChatFormatting.DARK_GRAY);
 
 	public static final Codec<SkyblockItemRarity> CODEC = StringRepresentable.fromEnum(SkyblockItemRarity::values);
@@ -33,14 +35,18 @@ public enum SkyblockItemRarity implements StringRepresentable {
 	public final float b;
 
 	SkyblockItemRarity(ChatFormatting formatting) {
+		this(formatting, TextColor.fromLegacyFormat(formatting));
+	}
+
+	SkyblockItemRarity(ChatFormatting formatting, TextColor textColor) {
 		this.name = name().replace("_", " ");
 		this.formatting = formatting;
 		//noinspection DataFlowIssue
-		this.color = formatting.getColor();
+		this.color = textColor.getValue();
 
-		this.r = ((color >> 16) & 0xFF) / 255f;
-		this.g = ((color >> 8) & 0xFF) / 255f;
-		this.b = (color & 0xFF) / 255f;
+		this.r = ((this.color >> 16) & 0xFF) / 255f;
+		this.g = ((this.color >> 8) & 0xFF) / 255f;
+		this.b = (this.color & 0xFF) / 255f;
 	}
 
 	/**
