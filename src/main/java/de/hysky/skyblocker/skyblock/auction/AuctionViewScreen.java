@@ -1,7 +1,9 @@
 package de.hysky.skyblocker.skyblock.auction;
 
 import de.hysky.skyblocker.SkyblockerMod;
+import de.hysky.skyblocker.utils.ContainerUtils;
 import de.hysky.skyblocker.utils.ItemUtils;
+import de.hysky.skyblocker.utils.Utils;
 import de.hysky.skyblocker.utils.render.gui.AbstractCustomHypixelGUI;
 import org.joml.Matrix3x2fStack;
 
@@ -26,12 +28,15 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
+
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScreenHandler> {
 	protected static final Identifier BACKGROUND_TEXTURE = SkyblockerMod.id("textures/gui/auctions_gui/view.png");
@@ -102,7 +107,11 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 				buyButton.active = false;
 			}
 			case TOP_BID -> infoTextWidget.setMessage(Component.translatable("skyblocker.fancyAuctionHouse.alreadyTopBid").withColor(CommonColors.SOFT_YELLOW));
-			case AFFORD -> infoTextWidget.setMessage(Component.empty());
+			case AFFORD -> {
+				infoTextWidget.setMessage(Component.empty());
+				buyButton.active = true;
+				buyButton.visible = true;
+			}
 			case COLLECT_AUCTION -> {
 				infoTextWidget.setMessage(changeProfile ? Component.translatable("skyblocker.fancyAuctionHouse.differentProfile") : wonAuction ? Component.empty() : Component.translatable("skyblocker.fancyAuctionHouse.didntWin"));
 				//priceWidget.setMessage(Text.empty());
@@ -131,6 +140,10 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 				priceWidget.active = false;
 
 				infoTextWidget.setMessage(Component.translatable("skyblocker.fancyAuctionHouse.yourAuction"));
+			}
+			case GRACE_PERIOD -> {
+				buyButton.active = false;
+				infoTextWidget.setMessage(Component.translatable("skyblocker.fancyAuctionHouse.canBuyIn", "Unknown"));
 			}
 		}
 		updateLayout();
@@ -195,7 +208,28 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onSlotChange(AuctionHouseScreenHandler handler, int slotId, ItemStack stack) {
-		if (stack.is(Items.BLACK_STAINED_GLASS_PANE) || slotId == 13 || slotId >= handler.getRowCount() * 9) return;
+		if (stack.is(Items.BLACK_STAINED_GLASS_PANE) || slotId >= handler.getRowCount() * 9) return;
+		if (slotId == 13) {
+			if (buyState == BuyState.GRACE_PERIOD) {
+				String line = ItemUtils.getLoreLineIf(stack, s -> s.trim().startsWith("Can buy in: "));
+				if (line != null) {
+					infoTextWidget.setMessage(Component.translatable("skyblocker.fancyAuctionHouse.canBuyIn", Component.literal(line.split(":")[1].trim()).withStyle(ChatFormatting.YELLOW)));
+				} else {
+					// Can buy it now.
+					// hypixel for some reason does NOT change the button back to the item it should be because I guess it would be too nice >:(
+					// so we have to deduce if the user can afford or not manually
+					double price = 0;
+					try {
+						// I don't feel like storing the parsed price in a field...
+						price = Double.parseDouble(priceText.getString().replace("coins", "").replace(",", "").trim());
+					} catch (NumberFormatException _) {}
+					if (price <= Utils.getPurse()) changeState(BuyState.AFFORD);
+					else changeState(BuyState.CANT_AFFORD);
+
+				}
+			}
+			return;
+		}
 		if (stack.is(Items.RED_TERRACOTTA)) { // Red terracotta shows up when you can cancel it
 			changeState(BuyState.CANCELLABLE_AUCTION);
 			buySlotID = slotId;
@@ -216,6 +250,11 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 		} else if (stack.is(Items.NAME_TAG)) {
 			getPriceFromTooltip(ItemUtils.getLore(stack));
 			changeProfile = true;
+			buySlotID = slotId;
+		} else if (stack.is(ItemTags.BEDS)) {
+			// An item is in grace period for 20 seconds after the BIN auction started.
+			changeState(BuyState.GRACE_PERIOD);
+			getPriceFromTooltip(ItemUtils.getLore(stack));
 			buySlotID = slotId;
 		}
 		String lowerCase = stack.getHoverName().getString().toLowerCase(Locale.ENGLISH);
@@ -282,13 +321,13 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 		// This really shouldn't be possible to be null in its ACTUAL use case.
 		//noinspection DataFlowIssue
 		return new PopupScreen.Builder(this, title)
-				.addButton(Component.translatable("text.skyblocker.confirm"), _ -> this.minecraft.gameMode.handleContainerInput(this.minecraft.player.containerMenu.containerId, 11, 0, ContainerInput.PICKUP, minecraft.player))
+				.addButton(Component.translatable("text.skyblocker.confirm"), _ -> this.minecraft.gameMode.handleContainerInput(this.minecraft.player.containerMenu.containerId, 11, ContainerUtils.getContainerClickButton(InputConstants.MOUSE_BUTTON_LEFT), ContainerInput.PICKUP, minecraft.player))
 				.addButton(Component.translatable("gui.cancel"), PopupScreen::onClose)
 				.addMessage((isBinAuction ? Component.translatable("skyblocker.fancyAuctionHouse.price") : Component.translatable("skyblocker.fancyAuctionHouse.newBid")).append(" ").append(priceText))
 				.onClose(() -> {
 					// This really shouldn't be possible to be null in its ACTUAL use case.
 					//noinspection DataFlowIssue
-					this.minecraft.gameMode.handleContainerInput(this.minecraft.player.containerMenu.containerId, 15, 0, ContainerInput.PICKUP, minecraft.player);
+					this.minecraft.gameMode.handleContainerInput(this.minecraft.player.containerMenu.containerId, 15, ContainerUtils.getContainerClickButton(InputConstants.MOUSE_BUTTON_LEFT), ContainerInput.PICKUP, minecraft.player);
 				})
 				.build();
 	}
@@ -299,6 +338,7 @@ public class AuctionViewScreen extends AbstractCustomHypixelGUI<AuctionHouseScre
 		TOP_BID,
 		COLLECT_AUCTION,
 		CANCELLABLE_AUCTION,
-		OWN_AUCTION
+		OWN_AUCTION,
+		GRACE_PERIOD
 	}
 }

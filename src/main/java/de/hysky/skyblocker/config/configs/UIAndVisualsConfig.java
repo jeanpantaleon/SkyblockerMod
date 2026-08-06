@@ -54,6 +54,8 @@ public class UIAndVisualsConfig {
 
 	public SlotText slotText = new SlotText();
 
+	public StorageOverlay storageOverlay = new StorageOverlay();
+
 	public RadialMenu radialMenu = new RadialMenu();
 
 	public InventorySearchConfig inventorySearch = new InventorySearchConfig();
@@ -113,6 +115,21 @@ public class UIAndVisualsConfig {
 
 		public boolean slotTextToggled = true;
 
+	}
+
+	public static class StorageOverlay {
+		public boolean enabled = false;
+
+		public int storagesPerRow = 3;
+
+		public int backpackWidth = 9;
+
+		public boolean rememberSearch = false;
+
+		public boolean rememberOpened = false;
+
+		// present in case we need to patch it out for x or y reason
+		public transient boolean doNotResetCursor = true;
 	}
 
 	public static class RadialMenu {
@@ -288,6 +305,10 @@ public class UIAndVisualsConfig {
 
 		public IntelligenceDisplay intelligenceDisplay = IntelligenceDisplay.ORIGINAL;
 
+		public boolean showEstimatedTilde = true;
+
+		public boolean hasSeenVitalityAtLeastOnce = false;
+
 		// Kept in for backwards compatibility, remove if needed
 		@SuppressWarnings("DeprecatedIsStillUsed")
 		@Deprecated
@@ -399,6 +420,8 @@ public class UIAndVisualsConfig {
 		public int historyLength = 3;
 
 		public boolean enableCommands = false;
+
+		public boolean commandAutocomplete = true;
 
 		public List<String> bazaarHistory = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-package de.hysky.skyblocker.skyblock.galatea;
+package de.hysky.skyblocker.skyblock.foraging.galatea;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +68,7 @@ public class TerracottaPuzzle {
 	}
 
 	private static void extractRendering(PrimitiveCollector collector) {
-		if (!SkyblockerConfigManager.get().foraging.galatea.solveForestTemplePuzzle || !Utils.isInGalatea() || Utils.getArea() != Area.Galatea.FOREST_TEMPLE || CLIENT.level == null) return;
+		if (!SkyblockerConfigManager.get().foraging.moongladeMarsh.solveForestTemplePuzzle || !Utils.isInGalatea() || Utils.getArea() != Area.Galatea.FOREST_TEMPLE || CLIENT.level == null) return;
 
 		List<Direction> solutions = solve();
 

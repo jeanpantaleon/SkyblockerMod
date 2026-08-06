@@ -69,8 +69,13 @@ public class ShortcutsConfigScreen extends Screen {
 	}
 
 	private void deleteEntry(boolean confirmedAction, ShortcutsConfigListWidget.AbstractShortcutEntry entry) {
-		if (confirmedAction && entry instanceof ShortcutsConfigListWidget.ShortcutEntry<?> shortcutEntry) {
-			shortcutsConfigListWidget.removeEntry(shortcutEntry);
+		if (confirmedAction) {
+			if (entry instanceof ShortcutsConfigListWidget.ShortcutEntry<?> shortcutEntry) {
+				shortcutsConfigListWidget.removeEntry(shortcutEntry);
+			}
+			if (entry instanceof ShortcutsConfigListWidget.KeybindShortcutEntry) {
+				shortcutsConfigListWidget.updateKeybinds();
+			}
 		}
 		minecraft.setScreen(this); // Re-inits the screen and keeps the old instance of ShortcutsConfigListWidget
 		shortcutsConfigListWidget.setScrollAmount(scrollAmount);
@@ -84,15 +89,12 @@ public class ShortcutsConfigScreen extends Screen {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
-		if (super.mouseClicked(click, doubled)) {
-			return true;
-		}
-		// Only stop editing if super didn't consume the click
-		boolean wasEditing = shortcutsConfigListWidget.stopEditing();
-		if (wasEditing) {
+		if (super.mouseClicked(click, doubled)) return true;
+		if (shortcutsConfigListWidget.stopEditing()) {
 			shortcutsConfigListWidget.updateKeybinds();
 		}
-		return wasEditing;
+		checkForDuplicates();
+		return false;
 	}
 
 	@Override
@@ -124,5 +126,17 @@ public class ShortcutsConfigScreen extends Screen {
 		buttonDelete.active = Shortcuts.isShortcutsLoaded() && shortcutsConfigListWidget.getSelected() instanceof ShortcutsConfigListWidget.ShortcutEntry;
 		buttonNew.active = Shortcuts.isShortcutsLoaded() && shortcutsConfigListWidget.getCategory().isPresent();
 		buttonDone.active = Shortcuts.isShortcutsLoaded();
+	}
+
+	protected void checkForDuplicates() {
+		boolean hasDuplicates = shortcutsConfigListWidget.hasDuplicates();
+
+		if (hasDuplicates) {
+			buttonDone.active = false;
+			buttonDone.setTooltip(Tooltip.create(Component.translatable("skyblocker.shortcuts.hasDuplicates")));
+		} else {
+			buttonDone.active = true;
+			buttonDone.setTooltip(Tooltip.create(Component.translatable("skyblocker.shortcuts.commandSuggestionTooltip")));
+		}
 	}
 }

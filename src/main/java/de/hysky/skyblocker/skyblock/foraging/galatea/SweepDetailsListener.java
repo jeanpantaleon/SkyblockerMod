@@ -1,4 +1,4 @@
-package de.hysky.skyblocker.skyblock.galatea;
+package de.hysky.skyblocker.skyblock.foraging.galatea;
 
 import com.mojang.logging.LogUtils;
 import de.hysky.skyblocker.config.SkyblockerConfigManager;
@@ -70,7 +70,7 @@ public class SweepDetailsListener implements ChatMessageListener {
 	@Override
 	public ChatFilterResult onMessage(Component message, String asString) {
 		if (!SweepDetailsHudWidget.LOCATIONS.contains(Utils.getLocation())) return ChatFilterResult.PASS;
-		if (!SkyblockerConfigManager.get().foraging.galatea.enableSweepDetailsWidget) return ChatFilterResult.PASS;
+		if (!SkyblockerConfigManager.get().foraging.moongladeMarsh.enableSweepDetailsWidget) return ChatFilterResult.PASS;
 		String msg = message.getString();
 
 		Matcher sweepDetails = SWEEP_DETAILS.matcher(msg);

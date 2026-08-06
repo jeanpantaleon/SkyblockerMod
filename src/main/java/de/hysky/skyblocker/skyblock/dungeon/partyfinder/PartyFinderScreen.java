@@ -2,10 +2,13 @@ package de.hysky.skyblocker.skyblock.dungeon.partyfinder;
 
 import com.google.gson.JsonObject;
 import com.mojang.authlib.properties.PropertyMap;
+import com.mojang.blaze3d.platform.InputConstants;
+
 import de.hysky.skyblocker.SkyblockerMod;
 import de.hysky.skyblocker.annotations.Init;
 import de.hysky.skyblocker.config.SkyblockerConfigManager;
 import de.hysky.skyblocker.debug.Debug;
+import de.hysky.skyblocker.utils.ContainerUtils;
 import de.hysky.skyblocker.utils.ItemUtils;
 import de.hysky.skyblocker.utils.Utils;
 import de.hysky.skyblocker.utils.render.texture.FallbackedTexture;
@@ -46,7 +49,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 
 public class PartyFinderScreen extends Screen {
 	protected static final Logger LOGGER = LoggerFactory.getLogger(PartyFinderScreen.class);
@@ -134,7 +136,7 @@ public class PartyFinderScreen extends Screen {
 				} catch (Exception e) {
 					LOGGER.error("[Skyblocker] Failed to load dungeons floor skull textures json", e);
 				}
-			}, Executors.newVirtualThreadPerTaskExecutor());
+			}, SkyblockerMod.VIRTUAL_THREAD_EXECUTOR);
 		});
 		ClientSendMessageEvents.COMMAND.register(command -> {
 			if (!Utils.isOnSkyblock() || !SkyblockerConfigManager.get().dungeons.fancyPartyFinder) return;
@@ -526,7 +528,7 @@ public class PartyFinderScreen extends Screen {
 	public void clickAndWaitForServer(int slotID) {
 		//System.out.println("hey");
 		assert minecraft.gameMode != null;
-		minecraft.gameMode.handleContainerInput(handler.containerId, slotID, 0, ContainerInput.PICKUP, minecraft.player);
+		minecraft.gameMode.handleContainerInput(handler.containerId, slotID, ContainerUtils.getContainerClickButton(InputConstants.MOUSE_BUTTON_LEFT), ContainerInput.PICKUP, minecraft.player);
 		waitingForServer = true;
 	}
 

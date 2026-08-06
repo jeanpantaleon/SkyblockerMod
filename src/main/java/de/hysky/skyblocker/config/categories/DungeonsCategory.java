@@ -160,6 +160,7 @@ public class DungeonsCategory {
 								.build())
 						.option(Option.<Boolean>createBuilder()
 								.name(Component.translatable("skyblocker.config.dungeons.map.showSelfHead"))
+								.description(Component.translatable("skyblocker.config.dungeons.map.showSelfHead.@Tooltip"))
 								.binding(defaults.dungeons.dungeonMap.showSelfHead,
 										() -> config.dungeons.dungeonMap.showSelfHead,
 										newValue -> config.dungeons.dungeonMap.showSelfHead = newValue)
@@ -851,6 +852,21 @@ public class DungeonsCategory {
 								.binding(defaults.dungeons.princeMessage.sendPrinceMessage,
 										() -> config.dungeons.princeMessage.sendPrinceMessage,
 										newValue -> config.dungeons.princeMessage.sendPrinceMessage = newValue)
+								.controller(ConfigUtils.createBooleanController())
+								.build())
+						.build())
+
+				// Bat Message
+				.group(OptionGroup.createBuilder()
+						.name(Component.translatable("skyblocker.config.dungeons.batMessage"))
+						.collapsed(false)
+						.option(Option.<Boolean>createBuilder()
+								.name(Component.translatable("skyblocker.config.dungeons.batMessage.sendBatMessage"))
+								.description(Component.translatable("skyblocker.config.dungeons.batMessage.sendBatMessage.@Tooltip"))
+								.tags(CommonTags.ADDED_IN_6_9_0)
+								.binding(defaults.dungeons.batMessage.sendBatMessage,
+										() -> config.dungeons.batMessage.sendBatMessage,
+										newValue -> config.dungeons.batMessage.sendBatMessage = newValue)
 								.controller(ConfigUtils.createBooleanController())
 								.build())
 						.build())

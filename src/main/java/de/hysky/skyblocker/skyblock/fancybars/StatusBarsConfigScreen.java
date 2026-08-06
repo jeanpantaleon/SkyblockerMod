@@ -5,8 +5,10 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectBooleanMutablePair;
 import it.unimi.dsi.fastutil.objects.ObjectBooleanPair;
 import it.unimi.dsi.fastutil.objects.ObjectObjectMutablePair;
+import net.minecraft.network.chat.CommonComponents;
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
+
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import de.hysky.skyblocker.skyblock.fancybars.BarPositioner.BarLocation;
 
@@ -277,7 +279,18 @@ public class StatusBarsConfigScreen extends Screen {
 								.addButton(Component.translatable("gui.ok"), PopupScreen::onClose)
 								.addMessage(Component.translatable("skyblocker.bars.config.explanation"))
 								.build()))
-				.bounds(width - 20, (height - 15) / 2, 15, 15)
+				.bounds(width - 20, height / 2 - 17, 15, 15)
+				.build());
+		this.addRenderableWidget(Button.builder(Component.literal("⟲"),
+						_ -> minecraft.setScreen(new PopupScreen.Builder(this, Component.translatable("skyblocker.bars.config.resetTitle"))
+								.addButton(CommonComponents.GUI_NO, PopupScreen::onClose)
+								.addButton(CommonComponents.GUI_YES, popup -> {
+									FancyStatusBars.resetBarPositions();
+									popup.onClose();
+								})
+								.addMessage(Component.translatable("skyblocker.bars.config.reset"))
+								.build()))
+				.bounds(width - 20, height / 2 + 2, 15, 15)
 				.build());
 	}
 
@@ -301,7 +314,7 @@ public class StatusBarsConfigScreen extends Screen {
 	}
 
 	private void onBarClick(StatusBar statusBar, MouseButtonEvent click) {
-		if (click.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+		if (click.button() == InputConstants.MOUSE_BUTTON_LEFT) {
 			cursorOffset = new ScreenPosition((int) (statusBar.getX() - click.x()), (int) (statusBar.getY() - click.y()));
 			cursorBar = statusBar;
 			cursorBar.inMouse = true;
@@ -312,7 +325,7 @@ public class StatusBarsConfigScreen extends Screen {
 			FancyStatusBars.updatePositions(true);
 			cursorBar.setX(width + 5); // send it to limbo lol
 			updateScreenRects();
-		} else if (click.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+		} else if (click.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
 			int x = (int) Math.min(click.x() - 1, width - editBarWidget.getWidth());
 			int y = (int) Math.min(click.y() - 1, height - editBarWidget.getHeight());
 			editBarWidget.visible = true;
@@ -369,7 +382,7 @@ public class StatusBarsConfigScreen extends Screen {
 	public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
 		StatusBar first = resizeHover.first();
 		// want the right click thing to have priority
-		if (!editBarWidget.isMouseOver(click.x(), click.y()) && click.button() == 0 && first != null) {
+		if (!editBarWidget.isMouseOver(click.x(), click.y()) && click.button() == InputConstants.MOUSE_BUTTON_LEFT && first != null) {
 			BarPositioner.BarAnchor barAnchor = first.anchor;
 			if (barAnchor != null) {
 				if (resizeHover.rightBoolean()) {

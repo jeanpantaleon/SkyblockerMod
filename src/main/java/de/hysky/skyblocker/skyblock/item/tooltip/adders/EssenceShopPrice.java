@@ -6,6 +6,7 @@ import de.hysky.skyblocker.utils.BazaarProduct;
 import de.hysky.skyblocker.utils.Formatters;
 import de.hysky.skyblocker.utils.ItemUtils;
 import de.hysky.skyblocker.utils.RegexUtils;
+import de.hysky.skyblocker.utils.render.text.GridComponent;
 import it.unimi.dsi.fastutil.objects.Object2LongArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import java.util.List;
@@ -22,8 +23,8 @@ import org.jspecify.annotations.Nullable;
 
 public class EssenceShopPrice extends SimpleTooltipAdder {
 	private static final Pattern ESSENCE_PATTERN = Pattern.compile("Cost (?<amount>[\\d,]+) (?<type>[A-Za-z]+) Essence");
-	private static final String[] ESSENCE_TYPES = {"WITHER", "SPIDER", "UNDEAD", "DRAGON", "GOLD", "DIAMOND", "ICE", "CRIMSON", "FOREST", "FOSSIL"};
-	private static final Object2LongArrayMap<String> ESSENCE_PRICES = new Object2LongArrayMap<>(ESSENCE_TYPES, new long[10]);
+	private static final String[] ESSENCE_TYPES = {"WITHER", "SPIDER", "UNDEAD", "DRAGON", "GOLD", "DIAMOND", "ICE", "CRIMSON", "FOREST", "FOSSIL", "SAFARI"};
+	private static final Object2LongArrayMap<String> ESSENCE_PRICES = new Object2LongArrayMap<>(ESSENCE_TYPES, new long[ESSENCE_TYPES.length]);
 
 	public EssenceShopPrice(int priority) {
 		super("\\S+ Essence Shop", priority);
@@ -55,13 +56,14 @@ public class EssenceShopPrice extends SimpleTooltipAdder {
 		long priceData = ESSENCE_PRICES.getLong(type.toUpperCase(Locale.ROOT));
 		if (priceData == 0) return; //Default value for getLong is 0 if no value exists for that key
 
-		lines.add(Component.empty()
-				.append(Component.literal("Essence Cost:      ").withStyle(ChatFormatting.AQUA))
+		lines.add(GridComponent.of(
+				Component.literal("Essence Cost:").withStyle(ChatFormatting.AQUA),
+				Component.empty()
 				.append(Component.literal(Formatters.INTEGER_NUMBERS.format(priceData * cost.getAsLong()) + " coins").withStyle(ChatFormatting.DARK_AQUA))
 				.append(Component.literal(" (").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(Formatters.INTEGER_NUMBERS.format(priceData) + " each").withStyle(ChatFormatting.GRAY))
 				.append(Component.literal(")").withStyle(ChatFormatting.GRAY))
-		);
+				));
 	}
 
 	@Override

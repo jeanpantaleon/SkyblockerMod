@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jspecify.annotations.Nullable;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 
 import com.google.gson.JsonParser;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -61,7 +61,7 @@ public class SkyblockerCreditsScreen extends Screen {
 	private final IntSet speedupModifiers = new IntOpenHashSet();
 	private float scrollSpeed;
 	private int direction;
-	private @Nullable Screen parent;
+	private final @Nullable Screen parent;
 
 	protected SkyblockerCreditsScreen(@Nullable Screen parent) {
 		super(TITLE);
@@ -72,11 +72,9 @@ public class SkyblockerCreditsScreen extends Screen {
 
 	@Init
 	public static void initClass() {
-		ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> {
-			dispatcher.register(ClientCommands.literal(SkyblockerMod.NAMESPACE)
-					.then(ClientCommands.literal("credits")
-							.executes(Scheduler.queueOpenScreenCommand(() -> new SkyblockerCreditsScreen(null)))));
-		});
+		ClientCommandRegistrationCallback.EVENT.register((dispatcher, _) -> dispatcher.register(ClientCommands.literal(SkyblockerMod.NAMESPACE)
+				.then(ClientCommands.literal("credits")
+						.executes(Scheduler.queueOpenScreenCommand(() -> new SkyblockerCreditsScreen(null))))));
 	}
 
 	private float calculateScrollSpeed() {
@@ -100,9 +98,9 @@ public class SkyblockerCreditsScreen extends Screen {
 	public boolean keyPressed(KeyEvent keyEvent) {
 		if (keyEvent.isUp()) {
 			this.direction = -1;
-		} else if (keyEvent.key() == GLFW.GLFW_KEY_LEFT_CONTROL || keyEvent.key() == GLFW.GLFW_KEY_RIGHT_CONTROL) {
+		} else if (keyEvent.key() == InputConstants.KEY_LCONTROL || keyEvent.key() == InputConstants.KEY_RCONTROL) {
 			this.speedupModifiers.add(keyEvent.key());
-		} else if (keyEvent.key() == GLFW.GLFW_KEY_SPACE) {
+		} else if (keyEvent.key() == InputConstants.KEY_SPACE) {
 			this.speedupActive = true;
 		}
 
@@ -116,9 +114,9 @@ public class SkyblockerCreditsScreen extends Screen {
 			this.direction = 1;
 		}
 
-		if (keyEvent.key() == GLFW.GLFW_KEY_SPACE) {
+		if (keyEvent.key() == InputConstants.KEY_SPACE) {
 			this.speedupActive = false;
-		} else if (keyEvent.key() == GLFW.GLFW_KEY_LEFT_CONTROL || keyEvent.key() == GLFW.GLFW_KEY_RIGHT_CONTROL) {
+		} else if (keyEvent.key() == InputConstants.KEY_LCONTROL || keyEvent.key() == InputConstants.KEY_RCONTROL) {
 			this.speedupModifiers.remove(keyEvent.key());
 		}
 
@@ -269,7 +267,7 @@ public class SkyblockerCreditsScreen extends Screen {
 
 		for (int i = 0; i < this.lines.size(); i++) {
 			if (i == this.lines.size() - 1) {
-				float diff = yPos + yOffs - (this.height / 2 - 6);
+				float diff = yPos + yOffs - ((float) this.height / 2 - 6);
 
 				if (diff < 0f) {
 					graphics.pose().translate(0f, -diff);
